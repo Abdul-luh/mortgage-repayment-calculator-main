@@ -94,7 +94,7 @@ function App() {
               <RadioGroup defaultValue="repayment" {...register("type")}>
                 <Label
                   htmlFor="repayment"
-                  className="text-sm border p-3 text-slate-900 font-medium rounded mb-2"
+                  className="text-sm border p-3 selection:bg-Lime/20 text-slate-900 font-medium rounded mb-2"
                 >
                   <RadioGroupItem value="repayment" id="repayment" />
                   Repayment
@@ -113,7 +113,7 @@ function App() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="bg-lime-400 hover:bg-lime-500 w-full text-slate-900 rounded-full text-base py-6"
+              className="hover:bg-Lime bg-Lime cursor w-full text-slate-900 rounded-full text-base py-6"
             >
               <Calculator className="mr-2" size={20} />
               Calculate Repayments
@@ -128,6 +128,11 @@ function App() {
             alt="icon-calculator"
             className="object-fit"
           />
+          <h2 className="text-white text-center">Result shown here</h2>
+          <p className="text-slate-100/80am text-sm text-center mt-2">
+            complete the form and click "calculate repayments" to see what your
+            monthly repayments would be
+          </p>
         </div>
       </div>
     </main>

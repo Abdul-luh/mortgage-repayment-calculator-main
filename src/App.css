@@ -44,6 +44,9 @@
   --font-plusjakarta-medium: "PlusJakarta-Medium", sans-serif;
   --font-plusjakarta-italic: "PlusJakarta-Italic", sans-serif;
 
+  --color-Lime: hsl(61, 70%, 52%);
+  --color-Red: hsl(4, 69%, 50%);
+
   --color-white: hsl(0 0% 100%);
   --color-slate-100: hsl(202 86% 94%);
   --color-slate-300: hsl(203 41% 72%);
