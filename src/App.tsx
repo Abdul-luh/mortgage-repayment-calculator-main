@@ -8,6 +8,8 @@ import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group";
 import { Calculator } from "lucide-react";
 import type { MortgageFormData } from "./lib/schema";
 import { mortgageSchema } from "./lib/schema";
+import { useState } from "react";
+import { monthlyRepaymentCalc, yearlyRepaymentCalc } from "./lib/calculate";
 
 function App() {
   const {
@@ -19,9 +21,13 @@ function App() {
     resolver: zodResolver(mortgageSchema),
     mode: "onTouched",
   });
+  const [monthly, setMonthly] = useState("");
+  const [total, setTotal] = useState("");
 
   function handleSubmitForm(data: MortgageFormData) {
-    console.log(data);
+    const { amount, term, rate } = data;
+    setMonthly(monthlyRepaymentCalc(amount, term, rate));
+    setTotal(yearlyRepaymentCalc(amount, term, rate));
   }
 
   return (
@@ -164,7 +170,7 @@ function App() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="hover:bg-Lime bg-Lime cursor w-full text-slate-900 rounded-full text-base py-6"
+              className="hover:bg-Lime bg-Lime cursor md:w-2/3 text-slate-900 rounded-full text-base py-6"
             >
               <Calculator className="mr-2" size={20} />
               Calculate Repayments
@@ -173,17 +179,43 @@ function App() {
         </div>
 
         {/* right side on desktop  */}
-        <div className="bg-slate-900 w-full flex flex-col justify-center items-center  md:rounded-r-2xl md:rounded-bl-4xl p-5">
-          <img
-            src="/assets/images/illustration-empty.svg"
-            alt="icon-calculator"
-            className="object-fit"
-          />
-          <h2 className="text-white text-center">Result shown here</h2>
-          <p className="text-slate-100/80am text-sm text-center mt-2">
-            complete the form and click "calculate repayments" to see what your
-            monthly repayments would be
-          </p>
+        <div className="bg-slate-900 flex flex-col justify-center w-full md:rounded-r-2xl md:rounded-bl-4xl p-5">
+          {!(monthly && total) ? (
+            <div className="flex flex-col justify-center items-center">
+              <img
+                src="/assets/images/illustration-empty.svg"
+                alt="icon-calculator"
+                className="object-fit place-items-center"
+              />
+              <h2 className="font-plusjakarta-bold text-white text-center">
+                Result shown here
+              </h2>
+              <p className="font-plusjakarta-medium text-slate-300 text-sm text-center mt-2">
+                Complete the form and click "calculate repayments" to see what
+                your monthly repayments would be
+              </p>
+            </div>
+          ) : (
+            <div>
+              <h2 className="font-plusjakarta-bold text-white pb-4 text-3xl font-bold">
+                your results
+              </h2>{" "}
+              <p className="text-slate-300 pb-4">
+                Your results are shown below based on the information provided.
+                to adjust the results, edit the forma and click "calculate
+                repayments" again
+              </p>
+              <div className="rounded-xl border-t-8 border-t-Lime p-4 bg-slate-900">
+                <p className="text-slate-100/80">Your monthly repayment</p>
+                <h2 className="text-Lime">${monthly}</h2>
+                <hr className="border-slate-300 my-4" />
+                <p className="text-slate-100/80">
+                  Total you'll repay over the term
+                </p>
+                <h3 className="text-white">${monthly}</h3>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </main>
