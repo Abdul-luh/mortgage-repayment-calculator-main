@@ -1,23 +1,35 @@
 import "./App.css";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
 import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group";
 import { Calculator } from "lucide-react";
+import type { MortgageFormData } from "./lib/schema";
+import { mortgageSchema } from "./lib/schema";
 
 function App() {
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<MortgageFormData>({
+    resolver: zodResolver(mortgageSchema),
+    mode: "onTouched",
+  });
+
+  function handleSubmitForm(data: MortgageFormData) {
+    console.log(data);
+  }
 
   return (
     <main className="flex justify-center items-center bg-slate-100 w-full min-h-screen">
       <div className="grid grid-cols-2 md:flex-row bg-white max-w-3xl w-full rounded-2xl">
         {/* left on desktop  */}
         <div className="flex flex-col gap-4 p-4">
-          <form
-            onSubmit={handleSubmit((data) => console.log(data))}
-            className="space-y-5"
-          >
+          <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-5">
             <div className="flex items-center justify-between gap-4 mb-4">
               <h1 className="text-xl font-plusjakarta-bold font-bold text-slate-900">
                 Mortgage Calculator
@@ -37,16 +49,28 @@ function App() {
                 Mortgage Amount
               </Label>
               <div className="relative">
-                <span className="absolute left-[1.2px] top-1/2 -translate-y-1/2 text-slate-500 bg-slate-100 px-3 py-1 font-bold rounded-l-md h-[34px]">
+                <span
+                  className={`absolute left-[1.2px] top-1/2 -translate-y-1/2 px-3 py-1 font-bold rounded-l-md h-[34px] ${
+                    errors.amount
+                      ? " bg-Red text-white"
+                      : "bg-slate-100 text-slate-500"
+                  }`}
+                >
                   £
                 </span>
                 <Input
                   id="amount"
                   type="number"
-                  {...register("amount")}
-                  className="pl-7 "
+                  step="any"
+                  {...register("amount", { valueAsNumber: true })}
+                  className={`pl-10 ${errors.amount && "border-Red"}`}
                 />
               </div>
+              {errors.amount && (
+                <span className="text-Red text-xs">
+                  {errors.amount.message as string}
+                </span>
+              )}
             </div>
 
             <div className="flex flex-col md:flex-row justify-between gap-4">
@@ -59,13 +83,24 @@ function App() {
                   <Input
                     id="term"
                     type="number"
-                    {...register("term")}
-                    className="pr-10"
+                    {...register("term", { valueAsNumber: true })}
+                    className={`pr-12 ${errors.term && "border-Red"}`}
                   />
-                  <span className="absolute right-[1px] top-1/2 -translate-y-1/2  px-2 py-1 font-bold text-sm text-slate-500 bg-slate-100 rounded-r-md h-[34px]">
+                  <span
+                    className={`absolute right-[1px] top-1/2 -translate-y-1/2  px-2 py-1 font-bold text-sm rounded-r-md h-[34px] ${
+                      errors.term
+                        ? " bg-Red text-white"
+                        : " bg-slate-100 text-slate-500"
+                    }`}
+                  >
                     years
                   </span>
                 </div>
+                {errors.term && (
+                  <span className="text-red-500 text-xs">
+                    {errors.term.message as string}
+                  </span>
+                )}
               </div>
 
               {/* Interest Rate */}
@@ -78,13 +113,24 @@ function App() {
                     id="rate"
                     type="number"
                     step="0.01"
-                    {...register("rate")}
-                    className="pr-10"
+                    {...register("rate", { valueAsNumber: true })}
+                    className={`pr-10 ${errors.rate && "border-Red"}`}
                   />
-                  <span className="absolute right-[1px] top-1/2 -translate-y-1/2  py-1 px-2 font-bold text-sm text-slate-500 bg-slate-100 rounded-r-md h-[34px]">
+                  <span
+                    className={`absolute right-[1px] top-1/2 -translate-y-1/2  py-1 px-2 font-bold text-sm rounded-r-md h-[34px] ${
+                      errors.rate
+                        ? " bg-Red text-white"
+                        : " bg-slate-100 text-slate-500"
+                    }`}
+                  >
                     %
                   </span>
                 </div>
+                {errors.rate && (
+                  <span className="text-red-500 text-xs">
+                    {errors.rate.message as string}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -108,6 +154,11 @@ function App() {
                   Interest Only
                 </Label>
               </RadioGroup>
+              {errors.type && (
+                <span className="text-red-500 text-xs">
+                  {errors.type.message as string}
+                </span>
+              )}
             </div>
 
             {/* Submit Button */}
