@@ -10,17 +10,33 @@ import type { MortgageFormData } from "./lib/schema";
 import { mortgageSchema } from "./lib/schema";
 import { useState } from "react";
 import { monthlyRepaymentCalc, yearlyRepaymentCalc } from "./lib/calculate";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "./components/ui/card";
+import { Separator } from "./components/ui/separator";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "./components/ui/form";
 
 function App() {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<MortgageFormData>({
+  const form = useForm<MortgageFormData>({
     resolver: zodResolver(mortgageSchema),
     mode: "onTouched",
   });
+  const {
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = form;
   const [monthly, setMonthly] = useState("");
   const [total, setTotal] = useState("");
 
@@ -35,147 +51,186 @@ function App() {
       <div className="grid grid-cols-2 md:flex-row bg-white max-w-3xl w-full rounded-2xl">
         {/* left on desktop  */}
         <div className="flex flex-col gap-4 p-4">
-          <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-5">
-            <div className="flex items-center justify-between gap-4 mb-4">
-              <h1 className="text-xl font-plusjakarta-bold font-bold text-slate-900">
-                Mortgage Calculator
-              </h1>
-              <button
-                type="button"
-                onClick={() => reset()}
-                className="text-sm hover:underline text-slate-700 "
-              >
-                Clear All
-              </button>
-            </div>
-
-            {/* Mortgage Amount */}
-            <div>
-              <Label htmlFor="amount" className="block mb-1 text-slate-700">
-                Mortgage Amount
-              </Label>
-              <div className="relative">
-                <span
-                  className={`absolute left-[1.2px] top-1/2 -translate-y-1/2 px-3 py-1 font-bold rounded-l-md h-[34px] ${
-                    errors.amount
-                      ? " bg-Red text-white"
-                      : "bg-slate-100 text-slate-500"
-                  }`}
+          <Form {...form}>
+            <form
+              onSubmit={handleSubmit(handleSubmitForm)}
+              className="space-y-5"
+            >
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <h1 className="text-xl font-plusjakarta-bold font-bold text-slate-900">
+                  Mortgage Calculator
+                </h1>
+                <button
+                  type="button"
+                  onClick={() => reset()}
+                  className="text-sm hover:underline text-slate-700 "
                 >
-                  £
-                </span>
-                <Input
-                  id="amount"
-                  type="number"
-                  step="any"
-                  {...register("amount", { valueAsNumber: true })}
-                  className={`pl-10 ${errors.amount && "border-Red"}`}
+                  Clear All
+                </button>
+              </div>
+
+              {/* Mortgage Amount */}
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel
+                      htmlFor="amount"
+                      className="block mb-1 text-slate-700"
+                    >
+                      Mortgage Amount
+                    </FormLabel>
+                    <div className="relative">
+                      <span
+                        className={`absolute left-[1.2px] top-1/2 -translate-y-1/2 px-3 py-1 font-bold rounded-l-md h-[34px] ${
+                          errors.amount
+                            ? " bg-Red text-white"
+                            : "bg-slate-100 text-slate-500"
+                        }`}
+                      >
+                        £
+                      </span>
+                      <FormControl>
+                        <Input
+                          id="amount"
+                          type="number"
+                          step="any"
+                          {...field}
+                          className={`pl-10 ${errors.amount && "border-Red"}`}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex flex-col md:flex-row justify-between gap-4">
+                {/* Term */}
+                <FormField
+                  control={form.control}
+                  name="term"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        htmlFor="term"
+                        className="block mb-1  text-slate-700"
+                      >
+                        Mortgage Term
+                      </FormLabel>
+                      <div className="relative">
+                        <FormControl>
+                          <Input
+                            id="term"
+                            type="number"
+                            {...field}
+                            className={`pr-12 ${errors.term && "border-Red"}`}
+                          />
+                        </FormControl>
+                        <span
+                          className={`absolute right-[1px] top-1/2 -translate-y-1/2  px-2 py-1 font-bold text-sm rounded-r-md h-[34px] ${
+                            errors.term
+                              ? " bg-Red text-white"
+                              : " bg-slate-100 text-slate-500"
+                          }`}
+                        >
+                          years
+                        </span>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Interest Rate */}
+                <FormField
+                  control={form.control}
+                  name="rate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        htmlFor="rate"
+                        className="block mb-1 text-slate-700"
+                      >
+                        Interest Rate
+                      </FormLabel>
+                      <div className="relative p-0">
+                        <FormControl>
+                          <Input
+                            id="rate"
+                            type="number"
+                            step="0.01"
+                            {...field}
+                            className={`pr-10 ${errors.rate && "border-Red"}`}
+                          />
+                        </FormControl>
+                        <span
+                          className={`absolute right-[1px] top-1/2 -translate-y-1/2  py-1 px-2 font-bold text-sm rounded-r-md h-[34px] ${
+                            errors.rate
+                              ? " bg-Red text-white"
+                              : " bg-slate-100 text-slate-500"
+                          }`}
+                        >
+                          %
+                        </span>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              {errors.amount && (
-                <span className="text-Red text-xs">
-                  {errors.amount.message as string}
-                </span>
-              )}
-            </div>
 
-            <div className="flex flex-col md:flex-row justify-between gap-4">
-              {/* Term */}
-              <div>
-                <Label htmlFor="term" className="block mb-1  text-slate-700">
-                  Mortgage Term
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="term"
-                    type="number"
-                    {...register("term", { valueAsNumber: true })}
-                    className={`pr-12 ${errors.term && "border-Red"}`}
-                  />
-                  <span
-                    className={`absolute right-[1px] top-1/2 -translate-y-1/2  px-2 py-1 font-bold text-sm rounded-r-md h-[34px] ${
-                      errors.term
-                        ? " bg-Red text-white"
-                        : " bg-slate-100 text-slate-500"
-                    }`}
-                  >
-                    years
-                  </span>
-                </div>
-                {errors.term && (
-                  <span className="text-red-500 text-xs">
-                    {errors.term.message as string}
-                  </span>
+              {/* Mortgage Type */}
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="block mb-2 text-slate-700">
+                      Mortgage Type
+                    </FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        defaultValue="repayment"
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-col gap-2"
+                      >
+                        <Label
+                          htmlFor="repayment"
+                          className="text-sm border p-3 selection:bg-Lime/20 text-slate-900 font-medium rounded mb-2"
+                        >
+                          <RadioGroupItem value="repayment" id="repayment" />
+                          Repayment
+                        </Label>
+                        <Label
+                          htmlFor="interest-only"
+                          className="text-sm border p-3 text-slate-900 font-medium rounded mb-4"
+                        >
+                          <RadioGroupItem
+                            value="interest-only"
+                            id="interest-only"
+                          />
+                          Interest Only
+                        </Label>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
 
-              {/* Interest Rate */}
-              <div>
-                <Label htmlFor="rate" className="block mb-1 text-slate-700">
-                  Interest Rate
-                </Label>
-                <div className="relative p-0">
-                  <Input
-                    id="rate"
-                    type="number"
-                    step="0.01"
-                    {...register("rate", { valueAsNumber: true })}
-                    className={`pr-10 ${errors.rate && "border-Red"}`}
-                  />
-                  <span
-                    className={`absolute right-[1px] top-1/2 -translate-y-1/2  py-1 px-2 font-bold text-sm rounded-r-md h-[34px] ${
-                      errors.rate
-                        ? " bg-Red text-white"
-                        : " bg-slate-100 text-slate-500"
-                    }`}
-                  >
-                    %
-                  </span>
-                </div>
-                {errors.rate && (
-                  <span className="text-red-500 text-xs">
-                    {errors.rate.message as string}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Mortgage Type */}
-            <div>
-              <Label className="block mb-2 text-slate-700">Mortgage Type</Label>
-              <RadioGroup defaultValue="repayment" {...register("type")}>
-                <Label
-                  htmlFor="repayment"
-                  className="text-sm border p-3 selection:bg-Lime/20 text-slate-900 font-medium rounded mb-2"
-                >
-                  <RadioGroupItem value="repayment" id="repayment" />
-                  Repayment
-                </Label>
-
-                <Label
-                  htmlFor="interest-only"
-                  className="text-sm border p-3 text-slate-900 font-medium rounded mb-4"
-                >
-                  <RadioGroupItem value="interest-only" id="interest-only" />
-                  Interest Only
-                </Label>
-              </RadioGroup>
-              {errors.type && (
-                <span className="text-red-500 text-xs">
-                  {errors.type.message as string}
-                </span>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              className="hover:bg-Lime bg-Lime cursor md:w-2/3 text-slate-900 rounded-full text-base py-6"
-            >
-              <Calculator className="mr-2" size={20} />
-              Calculate Repayments
-            </Button>
-          </form>
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                className="hover:bg-Lime bg-Lime cursor md:w-2/3 text-slate-900 rounded-full text-base py-6"
+              >
+                <Calculator className="mr-2" size={20} />
+                Calculate Repayments
+              </Button>
+            </form>
+          </Form>
         </div>
 
         {/* right side on desktop  */}
@@ -196,25 +251,29 @@ function App() {
               </p>
             </div>
           ) : (
-            <div>
-              <h2 className="font-plusjakarta-bold text-white pb-4 text-3xl font-bold">
-                your results
-              </h2>{" "}
-              <p className="text-slate-300 pb-4">
-                Your results are shown below based on the information provided.
-                to adjust the results, edit the forma and click "calculate
-                repayments" again
-              </p>
-              <div className="rounded-xl border-t-8 border-t-Lime p-4 bg-slate-900">
-                <p className="text-slate-100/80">Your monthly repayment</p>
-                <h2 className="text-Lime">${monthly}</h2>
-                <hr className="border-slate-300 my-4" />
-                <p className="text-slate-100/80">
-                  Total you'll repay over the term
-                </p>
-                <h3 className="text-white">${monthly}</h3>
-              </div>
-            </div>
+            <Card className="bg-slate-900 border-none">
+              <CardHeader>
+                <CardTitle className="text-white pb-2 text-3xl font-bold">
+                  Your results
+                </CardTitle>
+                <CardDescription className="text-slate-300 pb-2">
+                  Your results are shown below based on the information
+                  provided. To adjust the results, edit the form and click
+                  "calculate repayments" again.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-xl border-t-8 border-t-Lime p-4 bg-slate-900">
+                  <p className="text-slate-100/80">Your monthly repayment</p>
+                  <h2 className="text-Lime">£{monthly}</h2>
+                  <Separator className="my-4 bg-slate-300" />
+                  <p className="text-slate-100/80">
+                    Total you'll repay over the term
+                  </p>
+                  <h3 className="text-white">£{total}</h3>
+                </div>
+              </CardContent>
+            </Card>
           )}
         </div>
       </div>
