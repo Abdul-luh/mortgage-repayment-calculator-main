@@ -199,18 +199,39 @@ function App() {
                       >
                         <Label
                           htmlFor="repayment"
-                          className="text-sm border p-3 selection:bg-Lime/20 text-slate-900 font-medium rounded mb-2"
+                          className={`text-sm border p-3 selection:bg-Lime/20 text-slate-900 font-medium rounded mb-2 ${
+                            field.value === "repayment"
+                              ? "border-Lime bg-Lime/10"
+                              : ""
+                          }`}
                         >
-                          <RadioGroupItem value="repayment" id="repayment" />
+                          <RadioGroupItem
+                            value="repayment"
+                            id="repayment"
+                            className={`  h-4 w-4 border-2 transition ${
+                              field.value === "repayment"
+                                ? " border-Lime text-Lime data-[state=checked]:bg-Lime data-[state=checked]:border-Lime"
+                                : ""
+                            }`}
+                          />
                           Repayment
                         </Label>
                         <Label
                           htmlFor="interest-only"
-                          className="text-sm border p-3 text-slate-900 font-medium rounded mb-4"
+                          className={`text-sm border p-3 text-slate-900 font-medium rounded mb-4 ${
+                            field.value === "interest-only"
+                              ? "border-Lime bg-Lime/10"
+                              : ""
+                          }`}
                         >
                           <RadioGroupItem
                             value="interest-only"
                             id="interest-only"
+                            className={`  h-4 w-4 border-2 transition ${
+                              field.value === "interest-only"
+                                ? " border-Lime text-Lime data-[state=checked]:bg-Lime data-[state=checked]:border-Lime"
+                                : ""
+                            }`}
                           />
                           Interest Only
                         </Label>
